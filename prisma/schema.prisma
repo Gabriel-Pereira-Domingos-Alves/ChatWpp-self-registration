@@ -1,0 +1,32 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model SendMessage {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  phoneNumber String
+  message     String
+  clientId    String
+  client      Client   @relation(fields: [clientId], references: [id])
+
+  @@map("send_messages")
+}
+
+model Client {
+  id       String        @id @default(uuid())
+  name     String
+  number   String
+  session  String
+  messages SendMessage[]
+
+  @@map("clients")
+}
