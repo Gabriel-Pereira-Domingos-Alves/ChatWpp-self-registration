@@ -21,6 +21,16 @@ export class WhatsappController {
         }
     }
 
+    @Get('Clients')
+    async getClients(@Res() res: Response) {
+        try {
+            const clients = await this.whatsappService.getClients();
+            res.status(200).json({ clients });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to get clients', error: error.message });
+        }
+    }
+
     @Post('close/:clientId')
     async closeClient(@Param('clientId') clientId: string, @Res() res: Response) {
         try {

@@ -8,6 +8,13 @@ interface ClientSession {
     status: string;
 }
 
+interface Client{
+    id: string;
+    name: string;
+    number: string;
+    session: string;
+}
+
 @Injectable()
 export class WhatsappService {
     constructor(private prisma: PrismaService) {}
@@ -37,7 +44,7 @@ export class WhatsappService {
                     await this.prisma.client.upsert({
                         where: { id: clientId },
                         update: { session: 'notLogged' },
-                        create: { id: clientId, name: 'Client Name', number: 'Client Number', session: 'notLogged' },
+                        create: { id: clientId, name: clientId, number: 'Client Number', session: 'notLogged' },
                     });
                     resolve(base64Qrimg);
                 },
@@ -58,7 +65,7 @@ export class WhatsappService {
                     } catch (error) {
                         if (error.code === 'P2025') {
                             await this.prisma.client.create({
-                                data: { id: clientId, name: 'Client Name', number: 'Client Number', session: statusSession === 'isLogged' ? 'isLogged' : 'notLogged' },
+                                data: { id: clientId, name: clientId, number: 'Client Number', session: statusSession === 'isLogged' ? 'isLogged' : 'notLogged' },
                             });
                         } else {
                             throw error;
@@ -143,6 +150,19 @@ export class WhatsappService {
             console.log(error);
             throw new Error('Failed to send message');
         }
+    }
+
+    public async getClients(): Promise<Client[]> {
+        const clients = await this.prisma.client.findMany({
+            select: {
+                id: true,
+                name: true,
+                number: true,
+                session: true,
+            }
+        })
+        console.log(clients);
+        return clients;
     }
 
     public async closeClient(clientId: string): Promise<void> {
