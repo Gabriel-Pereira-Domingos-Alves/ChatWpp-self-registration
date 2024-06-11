@@ -66,6 +66,20 @@
     }
   }
 
+  .loader {
+    border-top-color: #18181B;
+    animation: spin 1s ease-in-out infinite;
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
   @layer base {
     * {
       @apply border-border;

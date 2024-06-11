@@ -8,7 +8,7 @@ interface ClientSession {
     status: string;
 }
 
-interface Client{
+interface Client {
     id: string;
     name: string;
     number: string;
@@ -20,57 +20,49 @@ export class WhatsappService {
     constructor(private prisma: PrismaService) {}
     private clients: Map<string, ClientSession> = new Map();
 
-    public async initializeClient(clientId: string): Promise<string> {
-        if (this.clients.has(clientId)) {
-            const clientSession = this.clients.get(clientId);
+    public async initializeClient(clientName: string): Promise<string> {
+        if (this.clients.has(clientName)) {
+            const clientSession = this.clients.get(clientName);
             if (clientSession.status === 'isLogged') {
-                console.log(`Client ${clientId} is already logged in`);
+                console.log(`Client ${clientName} is already logged in`);
                 return 'Client is already logged in';
             }
-            console.log(`Returning existing QR code for client ${clientId}`);
+            console.log(`Returning existing QR code for client ${clientName}`);
             return clientSession.qrCode;
         }
 
+        // Cria o cliente no banco de dados, usando clientName como id
+        const clientRecord = await this.prisma.client.upsert({
+            where: { id: clientName },
+            update: { session: 'notLogged' },
+            create: { id: clientName, name: clientName, number: 'clientNumber', session: 'notLogged' },
+        });
+
         return new Promise((resolve, reject) => {
             create(
-                clientId,
+                clientName, // Usando clientName como session name
                 async (base64Qrimg: string) => {
                     console.log('Base64 QR Code: ', base64Qrimg);
-                    if (this.clients.has(clientId)) {
-                        this.clients.get(clientId).qrCode = base64Qrimg;
+                    if (this.clients.has(clientName)) {
+                        this.clients.get(clientName).qrCode = base64Qrimg;
                     } else {
-                        this.clients.set(clientId, { client: null, qrCode: base64Qrimg, status: 'notLogged' });
+                        this.clients.set(clientName, { client: null, qrCode: base64Qrimg, status: 'notLogged' });
                     }
-                    await this.prisma.client.upsert({
-                        where: { id: clientId },
-                        update: { session: 'notLogged' },
-                        create: { id: clientId, name: clientId, number: 'Client Number', session: 'notLogged' },
-                    });
                     resolve(base64Qrimg);
                 },
                 async (statusSession: string) => {
                     console.log('Status Session: ', statusSession);
-                    if (this.clients.has(clientId)) {
-                        const clientSession = this.clients.get(clientId);
+                    if (this.clients.has(clientName)) {
+                        const clientSession = this.clients.get(clientName);
                         clientSession.status = statusSession === 'isLogged' ? 'isLogged' : 'notLogged';
-                        this.clients.set(clientId, clientSession);
+                        this.clients.set(clientName, clientSession);
                     } else {
-                        this.clients.set(clientId, { client: null, qrCode: null, status: statusSession });
+                        this.clients.set(clientName, { client: null, qrCode: null, status: statusSession });
                     }
-                    try {
-                        await this.prisma.client.update({
-                            where: { id: clientId },
-                            data: { session: statusSession === 'isLogged' ? 'isLogged' : 'notLogged' },
-                        });
-                    } catch (error) {
-                        if (error.code === 'P2025') {
-                            await this.prisma.client.create({
-                                data: { id: clientId, name: clientId, number: 'Client Number', session: statusSession === 'isLogged' ? 'isLogged' : 'notLogged' },
-                            });
-                        } else {
-                            throw error;
-                        }
-                    }
+                    await this.prisma.client.update({
+                        where: { id: clientName },
+                        data: { session: statusSession === 'isLogged' ? 'isLogged' : 'notLogged' },
+                    });
                 },
                 {
                     headless: 'new', // Usando 'new' para o modo headless
@@ -79,71 +71,71 @@ export class WhatsappService {
                 }
             )
                 .then(async (client) => {
-                    if (this.clients.has(clientId)) {
-                        const clientSession = this.clients.get(clientId);
+                    if (this.clients.has(clientName)) {
+                        const clientSession = this.clients.get(clientName);
                         clientSession.client = client;
-                        this.clients.set(clientId, clientSession);
+                        this.clients.set(clientName, clientSession);
                     } else {
-                        this.clients.set(clientId, { client, qrCode: null, status: 'notLogged' });
+                        this.clients.set(clientName, { client, qrCode: null, status: 'notLogged' });
                     }
 
                     // Verificar o estado de login após a inicialização
                     client.onStateChange(async (state) => {
-                        console.log(`Client ${clientId} state changed to: ${state}`);
+                        console.log(`Client ${clientName} state changed to: ${state}`);
                         if (state === 'CONNECTED') {
-                            const clientSession = this.clients.get(clientId);
+                            const clientSession = this.clients.get(clientName);
                             clientSession.status = 'isLogged';
-                            this.clients.set(clientId, clientSession);
+                            this.clients.set(clientName, clientSession);
                             await this.prisma.client.update({
-                                where: { id: clientId },
+                                where: { id: clientName },
                                 data: { session: 'isLogged' },
                             });
                         }
                     });
 
                     client.isConnected().then(async (isConnected) => {
-                        console.log(`Client ${clientId} is connected: ${isConnected}`);
+                        console.log(`Client ${clientName} is connected: ${isConnected}`);
                         if (isConnected) {
-                            const clientSession = this.clients.get(clientId);
+                            const clientSession = this.clients.get(clientName);
                             clientSession.status = 'isLogged';
-                            this.clients.set(clientId, clientSession);
+                            this.clients.set(clientName, clientSession);
                             await this.prisma.client.update({
-                                where: { id: clientId },
+                                where: { id: clientName },
                                 data: { session: 'isLogged' },
                             });
                             resolve('Client is already logged in');
                         } else {
-                            resolve(this.clients.get(clientId).qrCode);
+                            resolve(this.clients.get(clientName).qrCode);
                         }
                     });
                 })
                 .catch((error) => {
-                    console.error(`Error initializing client ${clientId}:`, error);
+                    console.error(`Error initializing client ${clientName}:`, error);
                     reject(error);
                 });
         });
     }
 
-    public async isClientLogged(clientId: string): Promise<boolean> {
-        if (this.clients.has(clientId)) {
-            const clientSession = this.clients.get(clientId);
+    public async isClientLogged(clientName: string): Promise<boolean> {
+        if (this.clients.has(clientName)) {
+            const clientSession = this.clients.get(clientName);
             return clientSession.status === 'isLogged';
         }
         return false;
     }
 
-    public async addNumberToWhatsapp(clientId: string, phoneNumber: string, message: string): Promise<void> {
-        if (!this.clients.has(clientId) || !this.clients.get(clientId).client) {
+    public async addNumberToWhatsapp(clientName: string, phoneNumber: string, message: string): Promise<void> {
+        if (!this.clients.has(clientName) || !this.clients.get(clientName).client) {
             throw new Error('Client not initialized');
         }
-        const { client } = this.clients.get(clientId);
+        const { client } = this.clients.get(clientName);
         try {
             await client.sendText(`${phoneNumber}@c.us`, message);
             await this.prisma.sendMessage.create({
                 data: {
                     message,
                     phoneNumber,
-                    clientId,
+                    clientId: clientName,
                 },
             });
         } catch (error) {
@@ -160,24 +152,22 @@ export class WhatsappService {
                 number: true,
                 session: true,
             }
-        })
-        console.log(clients);
+        });
         return clients;
     }
 
-    public async closeClient(clientId: string): Promise<void> {
-        if (this.clients.has(clientId)) {
-            const clientSession = this.clients.get(clientId);
+    public async closeClient(clientName: string): Promise<void> {
+        if (this.clients.has(clientName)) {
+            const clientSession = this.clients.get(clientName);
             if (clientSession.client) {
                 await clientSession.client.close();
-                //await clientSession.client.logout();
-                this.clients.delete(clientId);
-                console.log(`Client ${clientId} closed`);
+                this.clients.delete(clientName);
+                console.log(`Client ${clientName} closed`);
             } else {
-                console.log(`Client ${clientId} not found`);
+                console.log(`Client ${clientName} not found`);
             }
         } else {
-            console.log(`Client ${clientId} not found`);
+            console.log(`Client ${clientName} not found`);
         }
     }
 }

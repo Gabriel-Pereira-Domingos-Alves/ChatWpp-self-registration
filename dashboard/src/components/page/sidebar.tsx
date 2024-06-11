@@ -1,54 +1,66 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from "@/components/ui/dropdown-menu"
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
+import { usePathname } from "next/navigation";
 
 export default function Sidebar() {
+  const pathname = usePathname();
+
   return (
-      <div className="hidden border-r bg-gray-100/40 lg:block dark:bg-gray-800/40">
-        <div className="flex h-full max-h-screen flex-col gap-2">
-          <div className="flex h-[60px] items-center border-b px-6">
-            <Link href="#" className="flex items-center gap-2 font-semibold" prefetch={false}>
-              <Package2Icon className="h-6 w-6" />
-              <span className="">User Management</span>
+    <div className="hidden border-r bg-gray-100/40 lg:block dark:bg-gray-800/40">
+      <div className="flex h-full max-h-screen flex-col gap-2">
+        <div className="flex h-[60px] items-center border-b px-6">
+          <Link href="/" className="flex items-center gap-2 font-semibold" prefetch={false}>
+            <Package2Icon className="h-6 w-6" />
+            <span className="">User Management</span>
+          </Link>
+          <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
+            <BellIcon className="h-4 w-4" />
+            <span className="sr-only">Toggle notifications</span>
+          </Button>
+        </div>
+        <div className="flex-1 overflow-auto py-2">
+          <nav className="grid items-start px-4 text-sm font-medium">
+            <Link
+              href="/dashboard"
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-gray-900 dark:hover:text-gray-50 ${
+                pathname === "/dashboard"
+                  ? "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50"
+                  : "text-gray-500 hover:text-gray-900 dark:text-gray-400"
+              }`}
+              prefetch={false}
+            >
+              <HomeIcon className="h-4 w-4" />
+              Dashboard
             </Link>
-            <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-              <BellIcon className="h-4 w-4" />
-              <span className="sr-only">Toggle notifications</span>
-            </Button>
-          </div>
-          <div className="flex-1 overflow-auto py-2">
-            <nav className="grid items-start px-4 text-sm font-medium">
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                prefetch={false}
-              >
-                <HomeIcon className="h-4 w-4" />
-                Dashboard
-              </Link>
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg bg-gray-100 px-3 py-2 text-gray-900 transition-all hover:text-gray-900 dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50"
-                prefetch={false}
-              >
-                <UsersIcon className="h-4 w-4" />
-                Users
-              </Link>
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                prefetch={false}
-              >
-                <SettingsIcon className="h-4 w-4" />
-                Settings
-              </Link>
-            </nav>
-          </div>
+            <Link
+              href="/"
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-gray-900 dark:hover:text-gray-50 ${
+                pathname === "/"
+                  ? "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50"
+                  : "text-gray-500 hover:text-gray-900 dark:text-gray-400"
+              }`}
+              prefetch={false}
+            >
+              <UsersIcon className="h-4 w-4" />
+              Users
+            </Link>
+            <Link
+              href="/settings"
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-gray-900 dark:hover:text-gray-50 ${
+                pathname === "/settings"
+                  ? "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50"
+                  : "text-gray-500 hover:text-gray-900 dark:text-gray-400"
+              }`}
+              prefetch={false}
+            >
+              <SettingsIcon className="h-4 w-4" />
+              Settings
+            </Link>
+          </nav>
         </div>
       </div>
-  )
+    </div>
+  );
 }
 
 function BellIcon(props: any) {
