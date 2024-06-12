@@ -6,6 +6,8 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import axios from "axios"
 import React, { useEffect, useState } from "react"
 import Spinner from "@/components/page/spinner"
+import { TrashIcon } from "@radix-ui/react-icons"
+import LoadingDots from "@/components/page/loadingClose"
 
 interface Contas {
   id: string
@@ -17,8 +19,9 @@ interface Contas {
 const Home: React.FC = () => {
   const [contas , setContas] = useState<Contas[]>([])
   const [qrCode, setQrCode] = useState<string | null>(null)
+  const [close, setClose] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false) 
   const [isAddUserOpen, setIsAddUserOpen] = useState(false)
   const [newUserName, setNewUserName] = useState<string>('')
   const [loading, setLoading] = useState(false)
@@ -54,6 +57,19 @@ const Home: React.FC = () => {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleCloseClient = async (clientId: string) => {
+    try {
+      setClose(clientId)
+      const response = await axios.get(`/api/close/${clientId}`)
+      if (response.status === 200) {
+        setContas(contas.filter((conta) => conta.id !== clientId))
+      }
+    } catch (error) {
+      console.error('Error closing client:', error)
+    }
+    setClose(null)
   }
 
   const handleAddUser = async () => {
@@ -117,7 +133,7 @@ const Home: React.FC = () => {
         </div>
       )}
       <div className="border shadow-sm rounded-lg">
-        <Table>
+        <Table className="rounded-lg">
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
@@ -132,12 +148,15 @@ const Home: React.FC = () => {
                 <TableCell className={conta.session === 'isLogged' ? 'text-green-500' : 'text-red-500'}>
                   {conta.session === 'isLogged' ? 'Logado' : 'Não logado'}
                 </TableCell>
-                <TableCell>
-                  <Button variant={"outline"} size="sm" onClick={() => handleQrCode(conta.id)}>
+                <TableCell className="flex gap-2">
+                  <Button variant={"outline"} className="mr-2" size="sm" onClick={() => handleQrCode(conta.id)}>
                     QRcode generate
                   </Button>
+                  <Button variant={"outline"} size="sm" onClick={() => handleCloseClient(conta.id)}>
+                    {close === conta.id ? <LoadingDots /> : <TrashIcon className="h-4 w-4" />}
+                  </Button>
                 </TableCell>
-              </TableRow>
+              </TableRow>  
             ))}
           </TableBody>
         </Table>

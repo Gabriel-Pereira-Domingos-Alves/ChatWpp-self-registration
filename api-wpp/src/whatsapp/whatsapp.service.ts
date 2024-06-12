@@ -15,6 +15,15 @@ interface Client {
     session: string;
 }
 
+interface Messages {
+    id: string;
+    message: string;
+    phoneNumber: string;
+    clientId: string;
+    contactName: string;
+    createdAt: Date;
+}
+
 @Injectable()
 export class WhatsappService {
     constructor(private prisma: PrismaService) {}
@@ -130,18 +139,27 @@ export class WhatsappService {
         }
         const { client } = this.clients.get(clientName);
         try {
-            await client.sendText(`${phoneNumber}@c.us`, message);
+            await client.sendText(`${phoneNumber}@c.us`, message); 
+            const profile = await client.getContact(`${phoneNumber}@c.us`);
+            const contactName = profile.pushname || profile.name || profile.shortName || 'Unknown';
+            console.log(contactName)
             await this.prisma.sendMessage.create({
                 data: {
                     message,
                     phoneNumber,
                     clientId: clientName,
+                    contactName: contactName
                 },
             });
         } catch (error) {
             console.log(error);
             throw new Error('Failed to send message');
         }
+    }
+
+    public async getMessages(): Promise<Messages[]> {
+        const messages = await this.prisma.sendMessage.findMany();
+        return messages;
     }
 
     public async getClients(): Promise<Client[]> {
@@ -160,9 +178,23 @@ export class WhatsappService {
         if (this.clients.has(clientName)) {
             const clientSession = this.clients.get(clientName);
             if (clientSession.client) {
-                await clientSession.client.close();
-                this.clients.delete(clientName);
-                console.log(`Client ${clientName} closed`);
+                try {
+                    await clientSession.client.logout();
+                    await clientSession.client.close();
+                    await this.clients.delete(clientName);
+                    console.log(`Client ${clientName} closed`);
+                    await this.prisma.client.delete({
+                        where: { id: clientName },
+                    })
+                } catch (error) {
+                    console.log(error);
+                    await clientSession.client.logout();
+                    await this.clients.delete(clientName);
+                    console.log(`Client ${clientName} closed`);
+                    await this.prisma.client.delete({
+                        where: { id: clientName },
+                    })
+                }
             } else {
                 console.log(`Client ${clientName} not found`);
             }

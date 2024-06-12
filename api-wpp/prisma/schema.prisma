@@ -10,9 +10,10 @@ datasource db {
 model SendMessage {
   id          String   @id @default(uuid())
   createdAt   DateTime @default(now())
+  clientId    String
   phoneNumber String
   message     String
-  clientId    String
+  contactName String
   client      Client   @relation(fields: [clientId], references: [id])
 
   @@map("send_messages")

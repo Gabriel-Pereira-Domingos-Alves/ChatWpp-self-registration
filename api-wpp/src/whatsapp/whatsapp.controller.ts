@@ -50,4 +50,15 @@ export class WhatsappController {
             res.status(500).json({ message: 'Failed to add number to WhatsApp', error: error.message });
         }
     }
+
+    @Get('messages')
+    async getMessages(@Res() res: Response) {
+        try {
+            const messages = await this.whatsappService.getMessages();
+            console.log(messages);
+            res.status(200).json({ messages });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to get messages', error: error.message });
+        }
+    }
 }
