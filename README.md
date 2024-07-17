@@ -23,31 +23,27 @@ O projeto é composto por um servidor construído com Node.js e NestJS, que se i
 
 ## Funcionalidades
 
-- **Autenticação de Usuário**: Sistema de login seguro.
 - **Dashboard**: Painel de controle intuitivo para visualização de dados.
 - **Gerenciamento de Usuários**: Adição e remoção de usuários.
-- **Envio de Mensagens**: Integração com o WhatsApp para envio de mensagens e Cadastro de Numeros.
-- **Monitoramento de Mensagens**: Visualização das mensagens enviadas.
+- **Envio de Mensagens/ Cadastro de Chats**: Integração com o WhatsApp para envio de mensagens e Cadastro de Numeros.
+- **Monitoramento de Mensagens**: Visualização das mensagens enviadas. (Futuramente Recebimento de mensagens)
 
 ---
 
 ## Telas do Sistema
 
-### Tela de Login
+### Tela de Clientes (Contas Whatsapp)
 
-![Tela de Login](screenshots/login-screen.png)
+![Tela de Clientes](screenshots/users.png)
 
 ### Tela Principal do Dashboard
 
-![Tela do Dashboard](screenshots/dashboard-screen.png)
+![Tela do Dashboard](screenshots/dash.png)
 
-### Tela de Usuários
 
-![Tela de Usuários](screenshots/users-screen.png)
+### Tela da Documentaçção da API
 
-### Tela de Mensagens
-
-![Tela de Mensagens](screenshots/messages-screen.png)
+![Tela de Mensagens](screenshots/api.png)
 
 
 ## Por que deveria utilizar esse projeto?
