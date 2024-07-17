@@ -27,12 +27,20 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    setLoading(true)
-    axios.get('/api/clients').then(res => { 
-      setContas(res.data.clients)
-    })
-    setLoading(false)
-  }, [])
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get('/api/clients');
+        setContas(res.data.clients);
+      } catch (error) {
+        console.error('Failed to fetch clients:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleQrCode = async (clientId: string) => {
     setLoading(true)

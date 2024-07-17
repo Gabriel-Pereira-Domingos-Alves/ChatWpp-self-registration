@@ -19,7 +19,7 @@ interface Message {
 
 const Dashboard: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([])
-  const [selectedUser, setSelectedUser] = useState<string | null>(null)
+  const [selectedUser, setSelectedUser] = useState<string | null>('All users')
 
   useEffect(() => {
     // Fetch messages data from API
@@ -34,13 +34,16 @@ const Dashboard: React.FC = () => {
     })
   }, [])
 
-  const handleUserSelect = (user: string) => {
+  const handleUserSelect = (user: string | null) => {
     setSelectedUser(user)
   }
 
-  const filteredMessages = selectedUser
+  const filteredMessages = selectedUser && selectedUser !== 'All users'
     ? messages.filter((message) => message.clientId === selectedUser)
     : messages
+
+  // Get unique client IDs for the dropdown
+  const uniqueClientIds = Array.from(new Set(messages.map((message) => message.clientId)))
 
   return (
     <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
@@ -58,15 +61,18 @@ const Dashboard: React.FC = () => {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Select User</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {messages.map((message) => (
-                <DropdownMenuItem key={message.clientId} onClick={() => handleUserSelect(message.clientId)}>
-                  {message.clientId}
+              <DropdownMenuItem onClick={() => handleUserSelect('All users')}>
+                All users
+              </DropdownMenuItem>
+              {uniqueClientIds.map((clientId) => (
+                <DropdownMenuItem key={clientId} onClick={() => handleUserSelect(clientId)}>
+                  {clientId}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <div className="border shadow-sm rounded-lg">
+        <div className="border flex flex-col shadow-sm rounded-lg max-h-[500px] max-w-[1800px]">
           <Table>
             <TableHeader>
               <TableRow>
