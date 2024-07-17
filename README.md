@@ -1,4 +1,4 @@
-# Projeto de Integração com WhatsApp
+# Projeto de Automatização de Cadastro e envio de mensagens no Whatsapp
 
 Bem-vindo ao repositório do Projeto de Cadastro de Numeros e Envio de mensagens automatizas no WhatsApp! Este projeto oferece uma solução completa para integrar o WhatsApp com um sistema de comunicação automatizada, além de fornecer um dashboard intuitivo para monitorar e gerenciar as interações.
 
