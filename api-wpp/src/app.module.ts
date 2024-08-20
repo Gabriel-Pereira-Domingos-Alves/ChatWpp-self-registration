@@ -12,4 +12,4 @@ import { MessagesService } from './whatsapp/wppMessages.service';
   controllers: [AppController, WhatsappController],
   providers: [AppService, WhatsappService, PrismaService, MessagesService],
 })
-export class AppModule { }
+export class AppModule {}

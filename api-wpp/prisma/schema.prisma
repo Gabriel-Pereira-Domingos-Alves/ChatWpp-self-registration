@@ -28,3 +28,14 @@ model Client {
 
   @@map("clients")
 }
+
+model UserState {
+  id        String   @id @default(uuid())
+  userId    String   @unique // Tornando userId único
+  name      String?
+  email     String?
+  stage     String
+  createdAt DateTime @default(now())
+
+  @@map("user_states")
+}

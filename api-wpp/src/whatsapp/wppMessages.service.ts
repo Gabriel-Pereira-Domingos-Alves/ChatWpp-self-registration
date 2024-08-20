@@ -5,23 +5,59 @@ import { PrismaService } from 'src/database/PrismaService';
 export class MessagesService {
     constructor(private prisma: PrismaService) {}
 
-    public async handleMessage(clientName: string, message: any): Promise<void> {
-        // Remove o sufixo "@c.us" do número de telefone
-        const phoneNumber = message.from.replace('@c.us', '');
+    public async handleMessage(message: any, client: any): Promise<void> {
+        console.log(message);
 
-        // Verifica se o número está cadastrado no banco de dados
-        const client = await this.prisma.sendMessage.findFirst({
-            where: { phoneNumber: phoneNumber, clientId: clientName },
+        if (message.text != 'Hello') {
+            return;
+        }
+
+        const userState = await this.prisma.userState.findUnique({
+            where: { userId: message.from },
         });
 
-        if (client) {
-            // Loga os detalhes da mensagem
-            console.log('Mensagem recebida:', message);
-            console.log(`Nome: ${client.contactName}`);
-
-        } else {
-            console.log(`Número ${message.from} não está cadastrado.`);
-            console.log('Mensagem recebida:', message);
+        if (!userState) {
+            await client.sendText(message.from, `Olá ${message.sender.pushname || 'usuário'}, seu nome está correto? (Responda com Sim ou Não)`);
+            await this.prisma.userState.create({
+                data: {
+                    userId: message.from,
+                    stage: 'confirmingName',
+                    name: message.sender.pushname || 'usuário',  // Salvando o nome inicial
+                },
+            });
+        } else if (userState.stage === 'confirmingName') {
+            if (message.content.toLowerCase() === 'sim') {
+                await client.sendText(message.from, 'Por favor, informe seu e-mail.');
+                await this.prisma.userState.update({
+                    where: { userId: message.from },
+                    data: { stage: 'collectingEmail' },
+                });
+            } else {
+                await client.sendText(message.from, 'Por favor, informe o nome correto.');
+                await this.prisma.userState.update({
+                    where: { userId: message.from },
+                    data: { stage: 'collectingName' },
+                });
+            }
+        } else if (userState.stage === 'collectingName') {
+            await this.prisma.userState.update({
+                where: { userId: message.from },
+                data: { name: message.content, stage: 'collectingEmail' },  // Atualizando o nome
+            });
+            await client.sendText(message.from, `Nome atualizado para ${message.content}. Agora, por favor, informe seu e-mail.`);
+        } else if (userState.stage === 'collectingEmail') {
+            await this.prisma.userState.update({
+                where: { userId: message.from },
+                data: { email: message.content, stage: 'completed' },  // Salvando o e-mail
+            });
+            await client.sendText(message.from, `Obrigado pelo e-mail! Estamos enviando o documento agora.`);
+            await client.sendFile(
+                message.from,
+                '/Users/gabrielalves/Documents/integra/ChatWpp-self-registration/api-wpp/src/whatsapp/assets/ebook-manutencao_aegs.pdf',
+                'ebook-manutencao_aegs',
+                'O melhor ebook de manutenção de aegs!'
+            );
+            await this.prisma.userState.delete({ where: { userId: message.from } });
         }
     }
 }

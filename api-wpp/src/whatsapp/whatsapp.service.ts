@@ -44,7 +44,7 @@ export class WhatsappService {
                 return clientSession.qrCode;
             }
 
-            const clientRecord = await this.prisma.client.upsert({
+             await this.prisma.client.upsert({
                 where: { id: clientName },
                 update: { session: 'notLogged' },
                 create: { id: clientName, name: clientName, number: 'clientNumber', session: 'notLogged' },
@@ -109,7 +109,7 @@ export class WhatsappService {
                     });
 
                     client.onMessage(async (message) => {
-                        await this.messagesService.handleMessage(clientName, message);
+                        await this.messagesService.handleMessage(message, client);
                     })
                     const isConnected = await client.isConnected();
                     this.logger.log(`Client ${clientName} is connected: ${isConnected}`);
