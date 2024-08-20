@@ -14,28 +14,38 @@ export class MessagesService {
         });
 
         // Se o usuário não tem um estado salvo, só responde a mensagem "oi"
-        if (!userState) {
-            if (message.content.toLowerCase() === 'oi') {
-                await client.sendText(message.from, `Olá ${message.sender.pushname || 'usuário'}, seu nome está correto? (Responda com Sim ou Não)`);
-                await this.prisma.userState.create({
-                    data: {
-                        userId: message.from,
-                        stage: 'confirmingName',
-                        name: message.sender.pushname || 'usuário',  // Salvando o nome inicial
-                    },
-                });
-            } else {
-                // Se o usuário enviar outra mensagem que não seja "oi", o bot não responde
-                return;
+        if (!userState || userState.stage === 'completed') {
+            if (message.content.toLowerCase() === 'quero meu ebook sobre manutenção de aegs') {
+                await client.sendText(message.from, `Olá ${message.sender.pushname || 'usuário'}, seu nome está correto?`);
+        
+                if (!userState) {
+                    // Cria um novo registro se não existir
+                    await this.prisma.userState.create({
+                        data: {
+                            userId: message.from,
+                            stage: 'confirmingName',
+                        },
+                    });
+                } else {
+                    // Atualiza o registro existente
+                    await this.prisma.userState.update({
+                        where: { userId: message.from },
+                        data: {
+                            stage: 'confirmingName',
+                        },
+                    });
+                }
             }
         } else {
             // Se o usuário já tem um estado salvo, segue o fluxo de conversação
             if (userState.stage === 'confirmingName') {
-                if (message.content.toLowerCase() === 'sim') {
+                if (['sim', 's', 'yes', 'y'].includes(message.content.toLowerCase())) {
                     await client.sendText(message.from, 'Por favor, informe seu e-mail.');
                     await this.prisma.userState.update({
                         where: { userId: message.from },
-                        data: { stage: 'collectingEmail' },
+                        data: { stage: 'collectingEmail',
+                            name: message.sender.pushname || 'usuário'  // Atualizando o nome
+                         },
                     });
                 } else {
                     await client.sendText(message.from, 'Por favor, informe o nome correto.');
@@ -55,14 +65,13 @@ export class MessagesService {
                     where: { userId: message.from },
                     data: { email: message.content, stage: 'completed' },  // Salvando o e-mail
                 });
-                await client.sendText(message.from, `Obrigado pelo e-mail! Estamos enviando o documento agora.`);
+                await client.sendText(message.from, `Obrigado pelo e-mail! Estamos enviando o curso de manutenção de AEGs agora.`);
                 await client.sendFile(
                     message.from,
-                    '/Users/gabrielalves/Documents/integra/ChatWpp-self-registration/api-wpp/src/whatsapp/assets/ebook-manutencao_aegs.pdf',
+                    'C:\\Users\\Fred\\Documents\\GitHub\\ChatWpp-self-registration\\api-wpp\\src\\whatsapp\\assets\\ebook-manutencao_aegs.pdf',
                     'ebook-manutencao_aegs',
-                    'O melhor ebook de manutenção de aegs!'
+                    'Ebook de manutenção de AEGs!'
                 );
-                await this.prisma.userState.delete({ where: { userId: message.from } });
             }
         }
     }
