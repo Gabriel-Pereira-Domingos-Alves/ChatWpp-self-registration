@@ -138,7 +138,7 @@ export class MessagesService {
             'Se você está interessado em receber informações exclusivas, atualizações e dicas valiosas sobre airsoft, junte-se ao nosso grupo de divulgação no WhatsApp! Lá, compartilhamos as novidades mais quentes e você pode se conectar com outros entusiastas do esporte. Não perca a oportunidade de estar sempre por dentro do que está acontecendo. É rápido, fácil e, o melhor de tudo, você vai adorar fazer parte dessa comunidade. Clique no link e entre para o nosso grupo agora: https://chat.whatsapp.com/JtB6wX8aHddDALGzEFgkOg. Estamos esperando por você!'
         );
 
-        await new Promise(resolve => setTimeout(resolve, 2700000));
+        await new Promise(resolve => setTimeout(resolve, 900000));
         await client.sendImage(
             'C:\\Users\\Fred\\Documents\\GitHub\\ChatWpp-self-registration\\api-wpp\\src\\whatsapp\\assets\\milsin.png',
             //'/Users/gabrielalves/Documents/integra/ChatWpp-self-registration/api-wpp/src/whatsapp/assets/milsin.png',
@@ -146,7 +146,7 @@ export class MessagesService {
             'O airsoft é uma atividade de lazer que vem ganhando cada vez mais adeptos ao redor do mundo. utm_source=email&utm_mediumdes de jogo, o milsim (abreviação de “military simulation”) é uma das mais desafiadoras e imersivas. Este tipo de jogo busca replicar cenários e táticas militares, proporcionando aos participantes uma experiência realista e envolvente. \n \n https://airsoftnews.com.br/milsim-no-airsoft-explorando-os-pros-contras-dificuldades-e-locais-de-jogo-em-belo-horizonte?utm_source=whatsapp&utm_medium=social&utm_campaign=whatsapp-cta'
         )
 
-        await new Promise(resolve => setTimeout(resolve, 2700000));
+        await new Promise(resolve => setTimeout(resolve, 900000));
         await client.sendImage(
             'C:\\Users\\Fred\\Documents\\GitHub\\ChatWpp-self-registration\\api-wpp\\src\\whatsapp\\assets\\female.png',
             //'/Users/gabrielalves/Documents/integra/ChatWpp-self-registration/api-wpp/src/whatsapp/assets/female.png',
@@ -154,7 +154,7 @@ export class MessagesService {
             'O crescimento da participação feminina no airsoft é uma tendência que tem ganhado força nos últimos anos, refletindo a inclusão e a diversidade que cada vez mais permeiam os esportes de ação. Essa presença crescente é um fator extremamente positivo para o esporte como um todo, trazendo uma série de benefícios tanto para as mulheres que ingressam na atividade quanto para o ambiente de jogo em si. \n \n https://airsoftnews.com.br/a-presenca-feminina-no-airsoft/?utm_source=whatsapp&utm_medium=social&utm_campaign=whatsapp-cta'
         )
 
-        await new Promise(resolve => setTimeout(resolve, 1000000));
+        await new Promise(resolve => setTimeout(resolve, 900000));
         await client.sendImage(
             'C:\\Users\\Fred\\Documents\\GitHub\\ChatWpp-self-registration\\api-wpp\\src\\whatsapp\\assets\\manutencao.png',
             //'/Users/gabrielalves/Documents/integra/ChatWpp-self-registration/api-wpp/src/whatsapp/assets/manutencao.png',
