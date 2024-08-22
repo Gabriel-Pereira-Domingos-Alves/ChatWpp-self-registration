@@ -33,7 +33,7 @@ export class MessagesService {
     }
 
     private async handleInitialMessage(message: any, client: any, userState: any) {
-        if (message.content.toLowerCase() === 'quero meu ebook sobre manutenção de aegs') {
+        if (message.content === 'Quero meu eBook sobre manutenção de AEGs') {
             await client.sendText(message.from, `Olá ${message.sender.pushname || 'usuário'}, seu nome está correto?`);
 
             if (!userState) {
@@ -113,8 +113,8 @@ export class MessagesService {
         });
         await client.sendFile(
             message.from,
-            //'C:\\Users\\Fred\\Documents\\GitHub\\ChatWpp-self-registration\\api-wpp\\src\\whatsapp\\assets\\',
-            '/Users/gabrielalves/Documents/integra/ChatWpp-self-registration/api-wpp/src/whatsapp/assets/ebook-manutencao_aegs.pdf',
+            'C:\\Users\\Fred\\Documents\\GitHub\\ChatWpp-self-registration\\api-wpp\\src\\whatsapp\\assets\\ebook-manutencao_aegs.pdf',
+            //'/Users/gabrielalves/Documents/integra/ChatWpp-self-registration/api-wpp/src/whatsapp/assets/ebook-manutencao_aegs.pdf',
             'ebook-manutencao_aegs',
             'Ebook de manutenção de AEGs!'
         );
@@ -127,8 +127,8 @@ export class MessagesService {
         await new Promise(resolve => setTimeout(resolve, 300000));
         await client.sendImage(
             message.from,
-            //'C:\\Users\\Fred\\Documents\\GitHub\\ChatWpp-self-registration\\api-wpp\\src\\whatsapp\\assets\\delta.png',
-            '/Users/gabrielalves/Documents/integra/ChatWpp-self-registration/api-wpp/src/whatsapp/assets/delta.png',
+            'C:\\Users\\Fred\\Documents\\GitHub\\ChatWpp-self-registration\\api-wpp\\src\\whatsapp\\assets\\delta.png',
+            //'/Users/gabrielalves/Documents/integra/ChatWpp-self-registration/api-wpp/src/whatsapp/assets/delta.png',
             'Equipe Delta',
             'A Equipe DELTA AIRSOFT TEAM nasceu em 2017, com raízes profundas no mundo militar e um compromisso inabalável com o esporte. Fundada por Admilson Alves Emidio, um ex-militar do Exército Brasileiro, a DELTA surgiu com o objetivo de proporcionar aos seus integrantes uma experiência autêntica e imersiva de combate simulado. Com uma história marcada por operações bem-sucedidas e um legado construído sobre disciplina, treinamento rigoroso e honra, a DELTA se destaca como uma equipe de elite no cenário do airsoft.conheça mais clicando no link: \n \n https://airsoftnews.com.br/delta-airsoft-team?utm_source=whatsapp&utm_medium=social&utm_campaign=whatsapp-cta',
         )
@@ -140,18 +140,26 @@ export class MessagesService {
 
         await new Promise(resolve => setTimeout(resolve, 2700000));
         await client.sendImage(
-            //'C:\\Users\\Fred\\Documents\\GitHub\\ChatWpp-self-registration\\api-wpp\\src\\whatsapp\\assets\\milsin.png',
-            '/Users/gabrielalves/Documents/integra/ChatWpp-self-registration/api-wpp/src/whatsapp/assets/milsin.png',
+            'C:\\Users\\Fred\\Documents\\GitHub\\ChatWpp-self-registration\\api-wpp\\src\\whatsapp\\assets\\milsin.png',
+            //'/Users/gabrielalves/Documents/integra/ChatWpp-self-registration/api-wpp/src/whatsapp/assets/milsin.png',
             'Milsin',
             'O airsoft é uma atividade de lazer que vem ganhando cada vez mais adeptos ao redor do mundo. utm_source=email&utm_mediumdes de jogo, o milsim (abreviação de “military simulation”) é uma das mais desafiadoras e imersivas. Este tipo de jogo busca replicar cenários e táticas militares, proporcionando aos participantes uma experiência realista e envolvente. \n \n https://airsoftnews.com.br/milsim-no-airsoft-explorando-os-pros-contras-dificuldades-e-locais-de-jogo-em-belo-horizonte?utm_source=whatsapp&utm_medium=social&utm_campaign=whatsapp-cta'
         )
 
         await new Promise(resolve => setTimeout(resolve, 2700000));
         await client.sendImage(
-            //'C:\\Users\\Fred\\Documents\\GitHub\\ChatWpp-self-registration\\api-wpp\\src\\whatsapp\\assets\\female.png',
-            '/Users/gabrielalves/Documents/integra/ChatWpp-self-registration/api-wpp/src/whatsapp/assets/female.png',
+            'C:\\Users\\Fred\\Documents\\GitHub\\ChatWpp-self-registration\\api-wpp\\src\\whatsapp\\assets\\female.png',
+            //'/Users/gabrielalves/Documents/integra/ChatWpp-self-registration/api-wpp/src/whatsapp/assets/female.png',
             'Mulher Airsoft',
             'O crescimento da participação feminina no airsoft é uma tendência que tem ganhado força nos últimos anos, refletindo a inclusão e a diversidade que cada vez mais permeiam os esportes de ação. Essa presença crescente é um fator extremamente positivo para o esporte como um todo, trazendo uma série de benefícios tanto para as mulheres que ingressam na atividade quanto para o ambiente de jogo em si. \n \n https://airsoftnews.com.br/a-presenca-feminina-no-airsoft/?utm_source=whatsapp&utm_medium=social&utm_campaign=whatsapp-cta'
+        )
+
+        await new Promise(resolve => setTimeout(resolve, 1000000));
+        await client.sendImage(
+            'C:\\Users\\Fred\\Documents\\GitHub\\ChatWpp-self-registration\\api-wpp\\src\\whatsapp\\assets\\manutencao.png',
+            //'/Users/gabrielalves/Documents/integra/ChatWpp-self-registration/api-wpp/src/whatsapp/assets/manutencao.png',
+            'Curso de Manutenção de AEGs',
+            'Se você quer elevar suas habilidades no airsoft e ainda transformar isso em uma oportunidade de lucro, este é o momento de investir no curso "Manutenção de AEGs e AEPs"! Além de aprender a manter e reparar suas próprias réplicas, você poderá ganhar dinheiro consertando equipamentos de outros jogadores. Não perca a chance de dominar a manutenção e abrir novas fontes de renda. Clique no link a seguir e garanta sua vaga antes que as inscrições se encerrem: \n \n https://go.hotmart.com/T95079139M?dp=1'
         )
     }
 }
