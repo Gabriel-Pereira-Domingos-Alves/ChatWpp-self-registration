@@ -44,7 +44,7 @@ model Message {
   id      String @id @default(uuid())
   message String
 
-  @@map("messages")
+  @@map("message")
 }
 
 model Group{
