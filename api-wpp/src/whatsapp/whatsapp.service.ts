@@ -254,6 +254,9 @@ export class WhatsappService {
     public async getMessage(messageId: string): Promise<any> {
         try {
             const message = await this.prisma.message.findMany({
+                select: {
+                    message: true
+                },
                 where: {
                     id: messageId
                 }
