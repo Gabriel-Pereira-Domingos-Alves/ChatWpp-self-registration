@@ -94,4 +94,17 @@ export class WhatsappController {
             res.status(500).json({ message: 'Failed to get groups', error: error.message });
         }
     }
+
+    @Get('get-id-groups')
+    async getChats(
+        @Res() res: Response,
+        @Query('clientId') clientId: string
+    ) {
+        try {
+            const groups = await this.whatsappService.getIdGroups(clientId);
+            res.status(200).json({ groups });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to get chats', error: error.message });
+        }
+    }
 }

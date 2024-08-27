@@ -253,7 +253,7 @@ export class WhatsappService {
 
     public async getMessage(messageId: string): Promise<any> {
         try {
-            const message = "aaaaaa"
+            const message = messageId
             return message
         } catch (error) {
             this.logger.error(`Error fetching messages: ${error.message}`, error.stack);
@@ -309,6 +309,22 @@ export class WhatsappService {
         try {
             const groups = await client.getAllChatsGroups();
             return groups
+        } catch (error) {
+            this.logger.error(`Error fetching groups: ${error.message}`, error.stack);
+            throw new Error('Failed to fetch groups');
+        }
+    }
+
+    public async getIdGroups(clientId: string): Promise<any> {
+        if (!this.clients.has(clientId)) {
+            throw new Error('Client not initialized');
+        }
+        const { client } = this.clients.get(clientId);
+    
+        try {
+            const groups: any[] = await client.getAllChatsGroups();
+            const serializedIds = groups.map(group => group.id._serialized);
+            return serializedIds;
         } catch (error) {
             this.logger.error(`Error fetching groups: ${error.message}`, error.stack);
             throw new Error('Failed to fetch groups');
