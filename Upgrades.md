@@ -17,8 +17,6 @@ Nova tabela ->
     messageId - Id da mensagem
     message - Mensagem/Texto
     
-    
-    
 - Se ficar no fluxo mais de 5 minutos mandar o ebook com as mensagens
 
 - Atualizar o bot para funções

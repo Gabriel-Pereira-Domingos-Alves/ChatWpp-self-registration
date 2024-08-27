@@ -230,4 +230,92 @@ export class WhatsappService {
             console.log(`Client ${clientName} not found`);
         }
     }
+
+    public async sendTexts(clientId: string, messageId: string, allUsers: boolean=false, dataDelay: number, delayMessage: number=3, placements: Record<string, string>, usersId: string[]): Promise<void> {
+        if (!this.clients.has(clientId)) {
+            throw new Error('Client not initialized');
+        }
+        const { client } = this.clients.get(clientId);
+    
+        try {
+            const message = await this.getMessage(messageId);
+            const users = allUsers ? await this.getAllUsers() : (usersId || await this.getUsers(placements, dataDelay));
+            
+            for (const user of users) {
+                await client.sendText(user, message);
+                await new Promise(resolve => setTimeout(resolve, delayMessage * 1000));
+            }
+        } catch (error) {
+            this.logger.error(`Error fetching messages: ${error.message}`, error.stack);
+            throw new Error('Failed to fetch messages');
+        }
+    }
+
+    public async getMessage(messageId: string): Promise<any> {
+        try {
+            const message = await this.prisma.messages.findMany({
+                where: {
+                    id: messageId
+                }
+            })
+            return message
+        } catch (error) {
+            this.logger.error(`Error fetching messages: ${error.message}`, error.stack);
+            throw new Error('Failed to fetch messages');
+        }
+    }
+
+
+    public async getAllUsers(): Promise<any> {
+        try {
+            const users = await this.prisma.userState.findMany(
+                {
+                    select: {
+                        userId: true,
+                        stage: true
+                    }
+                }
+            );
+            return users
+        } catch (error) {
+            this.logger.error(`Error fetching users: ${error.message}`, error.stack);
+            throw new Error('Failed to fetch users');
+        }
+    }
+
+    public async getUsers(placements: Record<string, string>, dataDelay: number): Promise<any> {
+        try {
+        const users = await this.prisma.userState.findMany({
+            where: {
+                AND: [
+                    { stage: { in: Object.values(placements) } },
+                    { createdAt: { gte: new Date(Date.now() - dataDelay * 86400000) } },
+                ],
+            },
+            select: {
+                userId: true,
+                stage: true
+            }
+        });
+        return users
+        } catch (error) {
+        this.logger.error(`Error fetching users: ${error.message}`, error.stack);
+        throw new Error('Failed to fetch users');
+        }
+    }
+
+    public async getGroups(clientId: string): Promise<any> {
+        if (!this.clients.has(clientId)) {
+            throw new Error('Client not initialized');
+        }
+        const { client } = this.clients.get(clientId);
+    
+        try {
+            const groups = await client.getAllChatsGroups();
+            return groups
+        } catch (error) {
+            this.logger.error(`Error fetching groups: ${error.message}`, error.stack);
+            throw new Error('Failed to fetch groups');
+        }
+    }
 }

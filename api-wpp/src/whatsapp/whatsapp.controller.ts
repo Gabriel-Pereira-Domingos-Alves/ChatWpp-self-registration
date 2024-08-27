@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Res } from '@nestjs/common';
+import { Controller, Get, Post, Query, Body, Param, Res } from '@nestjs/common';
 import { WhatsappService } from './whatsapp.service';
 import { Response } from 'express';
 
@@ -60,6 +60,38 @@ export class WhatsappController {
             res.status(200).json({ messages });
         } catch (error) {
             res.status(500).json({ message: 'Failed to get messages', error: error.message });
+        }
+    }
+
+    @Post('send-texts/:clientId')
+    async sendTexts(
+        @Res() res: Response,
+        @Param('clientId') clientId: string,
+        @Query('messageId') messageId: string,
+        @Query('allUsers') allUsers?: boolean,
+        @Query('dataDelay') dataDelay?: number,
+        @Query('delayMessage') delayMessage?: number,
+        @Body('placements') placements?: Record<string, string>,
+        @Body('usersId') usersId?: string[],
+      ) {
+        try {
+          await this.whatsappService.sendTexts(clientId, messageId, allUsers, dataDelay, delayMessage, placements, usersId);
+          res.status(200).json({ message: 'Message sent successfully' });
+        } catch (error) {
+          res.status(500).json({ message: 'Failed to send message', error: error.message });
+        }
+      }
+
+    @Post('get-groups')
+    async getGroups(
+        @Res() res: Response,
+        @Param('clientId') clientId: string
+    ) {
+        try {
+            const groups = await this.whatsappService.getGroups(clientId);
+            res.status(200).json({ groups });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to get groups', error: error.message });
         }
     }
 }
