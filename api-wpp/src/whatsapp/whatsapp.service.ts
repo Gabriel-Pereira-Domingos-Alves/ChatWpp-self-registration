@@ -318,4 +318,19 @@ export class WhatsappService {
             throw new Error('Failed to fetch groups');
         }
     }
+
+    public async getMembersGroups(clientId: string, groupId: string): Promise<any> {
+        if (!this.clients.has(clientId)) {
+            throw new Error('Client not initialized');
+        }
+        const { client } = this.clients.get(clientId);
+    
+        try {
+            const groups = await client.getGroupMembers(groupId, '3000');
+            return groups
+        } catch (error) {
+            this.logger.error(`Error fetching groups: ${error.message}`, error.stack);
+            throw new Error('Failed to fetch groups');
+        }
+    }
 }

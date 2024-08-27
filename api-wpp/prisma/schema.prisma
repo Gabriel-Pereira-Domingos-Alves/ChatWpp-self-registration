@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -38,4 +38,11 @@ model UserState {
   createdAt DateTime @default(now())
 
   @@map("user_states")
+}
+
+model Message {
+  id      String @id @default(uuid())
+  message String
+
+  @@map("messages")
 }
