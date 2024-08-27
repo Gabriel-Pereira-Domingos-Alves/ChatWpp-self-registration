@@ -136,11 +136,11 @@ export class MessagesService {
             select: { name: true, createdAt: true, userId: true },
         })
 
-        const url = 'https://localhost/start_flow';
+        const url = 'http://192.168.18.38/start_flow';
         const corpo = {
             "name": contact.name,
             "phone_number": contact.userId,
-            "time": contact.createdAt
+            "time": contact.createdAt.getTime(),
         };
 
         axios.post(url, corpo)
