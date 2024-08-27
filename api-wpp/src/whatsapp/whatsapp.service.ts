@@ -146,8 +146,8 @@ export class WhatsappService {
         }
         const { client } = this.clients.get(clientName);
         try {
-            await client.sendText(`${phoneNumber}@c.us`, message);
-            const profile = await client.getContact(`${phoneNumber}@c.us`);
+            await client.sendText(phoneNumber, message);
+            const profile = await client.getContact(phoneNumber);
             const contactName = profile.pushname || profile.name || profile.shortName || 'Unknown';
             await this.prisma.sendMessage.create({
                 data: {
@@ -253,14 +253,7 @@ export class WhatsappService {
 
     public async getMessage(messageId: string): Promise<any> {
         try {
-            const message = await this.prisma.message.findMany({
-                select: {
-                    message: true
-                },
-                where: {
-                    id: messageId
-                }
-            })
+            const message = "aaaaaa"
             return message
         } catch (error) {
             this.logger.error(`Error fetching messages: ${error.message}`, error.stack);

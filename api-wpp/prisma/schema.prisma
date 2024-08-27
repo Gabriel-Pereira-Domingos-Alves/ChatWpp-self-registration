@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://airsoftNews_owner:rTLxoet1f0Dg@ep-floral-mode-a4rxmd27-pooler.us-east-1.aws.neon.tech/airsoftNews?sslmode=require"
 }
 
 model SendMessage {
@@ -45,4 +45,12 @@ model Message {
   message String
 
   @@map("messages")
+}
+
+model Group{
+  id String @id @default(uuid())
+  group_name String
+  user String
+
+  @@map("whatsapp_group")
 }

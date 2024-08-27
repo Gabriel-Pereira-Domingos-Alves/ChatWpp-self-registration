@@ -46,7 +46,7 @@ export class WhatsappController {
     async addNumberToWhatsapp(@Param('clientId') clientId: string, @Body('phoneNumber') phoneNumber: string, @Body('message') message: string, @Res() res: Response) {
         try {
             await this.whatsappService.addNumberToWhatsapp(clientId, phoneNumber, message);
-            res.status(200).json({ message: 'Number added to WhatsApp successfully' });
+            res.status(200).json({ message: 'Message send to WhatsApp successfully' });
         } catch (error) {
             res.status(500).json({ message: 'Failed to add number to WhatsApp', error: error.message });
         }
@@ -82,10 +82,10 @@ export class WhatsappController {
         }
       }
 
-    @Post('get-groups')
+    @Get('get-groups')
     async getGroups(
         @Res() res: Response,
-        @Param('clientId') clientId: string
+        @Query('clientId') clientId: string
     ) {
         try {
             const groups = await this.whatsappService.getGroups(clientId);
