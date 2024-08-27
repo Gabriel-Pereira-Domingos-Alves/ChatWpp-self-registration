@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = "postgresql://airsoftNews_owner:rTLxoet1f0Dg@ep-floral-mode-a4rxmd27-pooler.us-east-1.aws.neon.tech/airsoftNews?sslmode=require"
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 model SendMessage {
@@ -47,10 +47,10 @@ model Message {
   @@map("message")
 }
 
-model Group{
-  id String @id @default(uuid())
+model Group {
+  id         String @id @default(uuid())
   group_name String
-  user String
+  user       String
 
   @@map("whatsapp_group")
 }
