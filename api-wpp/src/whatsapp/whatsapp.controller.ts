@@ -107,4 +107,21 @@ export class WhatsappController {
             res.status(500).json({ message: 'Failed to get chats', error: error.message });
         }
     }
+
+    @Post('send-link/:clientId')
+    async sendLink(
+        @Res() res: Response,
+        @Param('clientId') clientId: string,
+        @Body('phoneNumber') phoneNumber: string,
+        @Body('message') message: string,
+        @Body('link') link: string,
+        @Body('title') title: string
+    ) {
+        try {
+            await this.whatsappService.sendLink(clientId, phoneNumber, message, link, title);
+            res.status(200).json({ message: 'Message sent successfully' });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to send message', error: error.message });
+        }
+    }
 }
