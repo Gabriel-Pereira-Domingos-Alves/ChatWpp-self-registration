@@ -323,7 +323,11 @@ export class WhatsappService {
     
         try {
             const groups: any[] = await client.getAllChatsGroups();
-            const serializedIds = groups.map(group => group.id._serialized);
+            const serializedIds = groups.map(group => ({
+                id: group.id._serialized,
+                name: group.name
+              }));
+
             return serializedIds;
         } catch (error) {
             this.logger.error(`Error fetching groups: ${error.message}`, error.stack);
@@ -343,6 +347,22 @@ export class WhatsappService {
         } catch (error) {
             this.logger.error(`Error fetching groups: ${error.message}`, error.stack);
             throw new Error('Failed to fetch groups');
+        }
+    }
+
+    public async sendLink(clientId: string, phoneNumber: string, message: string, link: string, title: string): Promise<any> {
+        if (!this.clients.has(clientId)) {
+            throw new Error('Client not initialized');
+        }
+        const { client } = this.clients.get(clientId);
+    
+        try {
+            await client.sendLinkPreview(phoneNumber, link, title, message);
+            return true
+        } catch (error) {
+            console.log(error)
+            this.logger.error(`Error sending link: ${error.message}`, error.stack);
+            throw new Error('Failed to send link');
         }
     }
 }
