@@ -133,13 +133,14 @@ export class MessagesService {
 
         const contact = await this.prisma.userState.findUnique({
             where: { userId: message.from },
-            select: { name: true, createdAt: true, userId: true },
+            select: { name: true, createdAt: true, userId: true, email: true },
         })
 
         const url = 'http://192.168.18.38/start_flow';
         const corpo = {
             "name": contact.name,
             "phone_number": contact.userId,
+            "email": contact.email,
             "time": contact.createdAt.getTime(),
         };
 
