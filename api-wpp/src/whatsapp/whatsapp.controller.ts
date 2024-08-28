@@ -102,7 +102,7 @@ export class WhatsappController {
     ) {
         try {
             const groups = await this.whatsappService.getIdGroups(clientId);
-            res.status(200).json({ groups });
+            res.status(200).json(groups);
         } catch (error) {
             res.status(500).json({ message: 'Failed to get chats', error: error.message });
         }
