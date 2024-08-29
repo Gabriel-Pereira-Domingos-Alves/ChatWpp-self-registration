@@ -13,23 +13,25 @@ export class MessagesService {
                 where: { userId: message.from || message.sender.id },
             });
 
-            if (userState && userState.stage !== 'completed') {
-                // Verifica se se passaram mais de 5 minutos desde a última interação
-                const now = new Date();
-                const createdAt = new Date(userState.createdAt);
-                const minutesSinceLastInteraction = (now.getTime() - createdAt.getTime()) / (1000 * 60);
+            console.log(userState);
 
-                if (minutesSinceLastInteraction > 5) {
-                    // Se passaram mais de 5 minutos, envie o ebook e finalize
-                    await this.finalizeConversation(message, client);
-                    return;
-                }
+            const now = new Date();
+            const createdAt = new Date(userState?.createdAt);
+            const minutesSinceLastInteraction = (now.getTime() - createdAt.getTime()) / (1000 * 60);
+
+            if (userState?.stage && minutesSinceLastInteraction > 5 && userState.stage !== 'completed') {
+                await this.finalizeConversation(message, client);
+                return;
             }
+
+            const ebookRegex = /\b(ebook|Ebook|EBOOK|ebok)\b/i;
 
             if (!userState) {
                 await this.handleInitialMessage(message, client, userState);
-            } else if (userState.stage === 'completed') {
+                return
+            } else if (ebookRegex.test(message.content) && userState.stage === 'completed') {
                 await this.finalizeConversation(message, client);
+                return
             } else {
                 await this.continueConversation(message, client, userState);
             }
