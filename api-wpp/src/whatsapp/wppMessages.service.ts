@@ -116,18 +116,23 @@ export class MessagesService {
     private async handleCollectingEmail(message: any, client: any) {
         await client.sendText(message.from, `Obrigado pelo e-mail! Estamos enviando o curso de manutenção de AEGs agora.`);
 
+        await this.prisma.userState.update({
+            where: { userId: message.from },
+            data: { email: message.content},
+        });
+
         await this.finalizeConversation(message, client);
     }
 
     private async finalizeConversation(message: any, client: any) {
         await this.prisma.userState.update({
             where: { userId: message.from },
-            data: { email: message.content, stage: 'completed' },
+            data: { stage: 'completed' },
         });
 
         await client.sendFile(
             message.from,
-            'C:\\Users\\Fred\\Documents\\GitHub\\ChatWpp-self-registration\\api-wpp\\src\\whatsapp\\assets\\ebook-manutencao_aegs.pdf',
+            '/home/airsoft/Documentos/ChatWpp-self-registration/api-wpp/src/whatsapp/assets/ebook-manutencao_aegs.pdf',
             //'/Users/gabrielalves/Documents/integra/ChatWpp-self-registration/api-wpp/src/whatsapp/assets/ebook-manutencao_aegs.pdf',
             'ebook-manutencao_aegs',
             'Ebook de manutenção de AEGs!'
