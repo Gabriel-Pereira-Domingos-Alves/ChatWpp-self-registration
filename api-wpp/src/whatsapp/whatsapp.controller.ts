@@ -124,4 +124,20 @@ export class WhatsappController {
             res.status(500).json({ message: 'Failed to send message', error: error.message });
         }
     }
+
+    @Post('send-product/:clientId')
+    async sendProduct(
+        @Res() res: Response,
+        @Param('clientId') clientId: string,
+        @Body('phoneNumber') phoneNumber: string,
+        @Body('message') message: string,
+        @Body('image') image: string
+    ) {
+        try {
+            await this.whatsappService.sendProduct(clientId, phoneNumber, message, image);
+            res.status(200).json({ message: 'Message sent successfully' });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to send message', error: error.message });
+        }
+    }
 }

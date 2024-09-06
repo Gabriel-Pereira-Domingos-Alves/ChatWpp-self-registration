@@ -365,4 +365,20 @@ export class WhatsappService {
             throw new Error('Failed to send link');
         }
     }
+
+    public async sendProduct(clientId: string, phoneNumber: string, message: string, image: string): Promise<any> {
+        if (!this.clients.has(clientId)) {
+            throw new Error('Client not initialized');
+        }
+        const { client } = this.clients.get(clientId);
+        try {
+            const caption = message ? message.toString() : '';
+            await client.sendImage(phoneNumber, image, '', caption);
+            return true;
+        } catch (error) {
+            console.log(error);
+            this.logger.error(`Error sending image: ${error.message}`, error.stack);
+            throw new Error('Failed to send image');
+        }
+    }
 }
