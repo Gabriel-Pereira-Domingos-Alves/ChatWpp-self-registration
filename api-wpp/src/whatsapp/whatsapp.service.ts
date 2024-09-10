@@ -325,7 +325,9 @@ export class WhatsappService {
             const groups: any[] = await client.getAllChatsGroups();
             const serializedIds = groups.map(group => ({
                 id: group.id._serialized,
-                name: group.name
+                name: group.groupMetadata.subject,
+                time_creation: group.groupMetadata.creation,
+                participants: group.groupMetadata.participants.length,
               }));
 
             return serializedIds;
